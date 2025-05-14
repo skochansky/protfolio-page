@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formularz Kontaktowy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Formularz Kontaktowy</h1>
+    <form id="contactForm">
+        <div class="form-group">
+            <label for="firstName">Imię:</label>
+            <input type="text" id="firstName" name="firstName" required>
+        </div>
+        <div class="form-group">
+            <label for="lastName">Nazwisko:</label>
+            <input type="text" id="lastName" name="lastName" required>
+        </div>
+        <div class="form-group">
+            <label for="phone">Numer telefonu:</label>
+            <input type="tel" id="phone" name="phone" required>
+        </div>
+        <button type="submit">Wyślij prośbę o kontakt</button>
+    </form>
+    
+    <div id="response" class="response"></div>
+
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Pobierz dane z formularza
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const phone = document.getElementById('phone').value;
+            
+            // Przygotuj dane do wysłania
+            const formData = {
+                firstName: firstName,
+                lastName: lastName,
+                phone: phone,
+                requestType: 'contact'
+            };
+            
+            // Wyślij zapytanie do innej strony (zmień URL na właściwy)
+            fetch('https://example.com/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Błąd sieci lub serwera');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Pokaż odpowiedź
+                const responseDiv = document.getElementById('response');
+                responseDiv.style.display = 'block';
+                responseDiv.textContent = 'Dziękujemy! Twoja prośba o kontakt została wysłana. Skontaktujemy się wkrótce.';
+                responseDiv.style.backgroundColor = '#dff0d8';
+                
+                // Wyczyść formularz
+                document.getElementById('contactForm').reset();
+            })
+            .catch(error => {
+                // Obsłuż błąd
+                const responseDiv = document.getElementById('response');
+                responseDiv.style.display = 'block';
+                responseDiv.textContent = 'Wystąpił błąd: ' + error.message;
+                responseDiv.style.backgroundColor = '#f2dede';
+            });
+        });
+    </script>
+</body>
+</html>
